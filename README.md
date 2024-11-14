@@ -1,4 +1,10 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a boilerplate for the frontend stack that Mindsmith uses. It has typescript, tailwind, nextjs, shadcn/ui already configured. The goal is to get you the boilerplate that you would get if we added you to our main repo but without the distractions of the rest of the codebase.
+
+This project uses shadcn/ui for the components, but doesn't have any of them installed yet. You can find the components you want to use [here](https://ui.shadcn.com/docs/components). And install them with the commands they have ex: `npx shadcn@latest add accordion`
+
+Mindsmith currently uses the pages router, but you can use the app router if you want, which is what this boilerplate uses.
+
+(general nextjs stuff below)
 
 ## Getting Started
 
