@@ -1,10 +1,9 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import TableCell from './TableCell'
 import { Button } from '@/components/ui/button'
 import { ConvertMarkDownToTable, ConvertTableToMarkDown } from '../services/TableService'
-import { DialogHeader, DialogFooter } from '@/components/ui/dialog'
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { useRouter } from 'next/navigation'
 
 interface Cell {
   value: string
@@ -12,24 +11,40 @@ interface Cell {
 
 interface TableProps {
   tableMarkdown: string
+  defaultHasHeader?: boolean
+  defaultHasColumnHeader?: boolean
+  defaultWidths?: number[]
+  id?: string
+  editMode?: boolean
 }
 
-const Table: React.FC<TableProps> = ({tableMarkdown}) => {
+const Table: React.FC<TableProps> = ({tableMarkdown, defaultHasHeader, defaultHasColumnHeader, defaultWidths, id, editMode}) => {
   const [rows, setRows] = React.useState<Cell[][]>([])
-  const [widths, setWidths] = React.useState<number[]>([])
-  const [tableData, setTableData] = React.useState<string>(tableMarkdown)
-  const [dialogValue, setDialogValue] = React.useState<string>('')
+  const [widths, setWidths] = React.useState<number[]>(defaultWidths || [])
+  const [hasHeader, setHasHeader] = React.useState<boolean>(defaultHasHeader || false)
+  const [hasColumnHeader, setHasColumnHeader] = React.useState<boolean>(defaultHasColumnHeader || false)
+  const router = useRouter();
 
   React.useEffect(() => {
-    if (tableData) {
-      const dataRows = ConvertMarkDownToTable(tableData)
+    if (tableMarkdown) {
+      const dataRows = ConvertMarkDownToTable(tableMarkdown)
       setRows(dataRows)
-
-      setWidths(dataRows[0].map(() => {
-        return 100
-      }))
+      if (!defaultWidths) {
+        setWidths(dataRows[0].map(() => {
+          return 100
+        }))
+      }
     }
-  }, [tableData])
+  }, [defaultWidths, tableMarkdown])
+
+
+  useEffect(() => {
+    if (id){
+      const markdown = ConvertTableToMarkDown(rows)
+      const json = JSON.stringify({ id, value: markdown, header: hasHeader, colHeader: hasColumnHeader, widths: widths });
+      localStorage.setItem(id, json)
+    }
+  }, [rows, widths, hasHeader, hasColumnHeader])
 
   const handleAddColumn = (index?: number) =>  {
     const columnIndex = index ?? rows[0].length
@@ -137,7 +152,7 @@ const Table: React.FC<TableProps> = ({tableMarkdown}) => {
                 rowIndex={0}
                 content={header.value}
                 width={widths[index]}
-                className={'table-header'}
+                className={(hasHeader || (index === 0 && hasColumnHeader)) ? 'table-header' : 'table-cell'}
                 updateCell={handleUpdateCell}
                 handleSetWidth={handleSetWidth}
                 handleMoveColumn={handleMoveColumn}
@@ -146,6 +161,9 @@ const Table: React.FC<TableProps> = ({tableMarkdown}) => {
                 handleAddRow={handleAddRow}
                 handleDeleteColumn={handleDeleteColumn}
                 handleDeleteRow={handleDeleteRow}
+                handleToggleColumnHeader={() => setHasColumnHeader(!hasColumnHeader)}
+                handleToggleHeader={() => setHasHeader(!hasHeader)}
+                editMode={editMode}
               />
             ))}
           </tr>
@@ -161,7 +179,7 @@ const Table: React.FC<TableProps> = ({tableMarkdown}) => {
                   updateCell={handleUpdateCell}
                   content={cell.value}
                   width={widths[index]}
-                  className={'table-cell'}
+                  className={(index == 0 && hasColumnHeader) ? 'table-header' : 'table-cell'}
                   handleSetWidth={handleSetWidth}
                   handleMoveColumn={handleMoveColumn}
                   handleMoveRow={handleMoveRow}
@@ -169,44 +187,46 @@ const Table: React.FC<TableProps> = ({tableMarkdown}) => {
                   handleAddRow={handleAddRow}
                   handleDeleteColumn={handleDeleteColumn}
                   handleDeleteRow={handleDeleteRow}
+                  handleToggleColumnHeader={() => setHasColumnHeader(!hasColumnHeader)}
+                  handleToggleHeader={() => setHasHeader(!hasHeader)}
+                  editMode={editMode}
                 />
               ))}
             </tr>
             ))}
         </tbody>
       </table>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">New Table</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>New Table</DialogTitle>
-            <DialogDescription>
-              You can generate a new table by pasting markdown here.
-            </DialogDescription>
-          </DialogHeader>
-          <textarea
-            rows={10}
-            className="w-full p-2 border rounded"
-            onChange={(e) => setDialogValue(e.target.value)}
-          />
-          <DialogFooter>
-            <Button type="submit" onClick={() => {setTableData(dialogValue)}}>Generate Table</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      {rows.length > 0 && (
-        <Button
-          variant="outline"
-          className="mt-4 ml-4 mr-4"
-          onClick={() => {
-            const markdown = ConvertTableToMarkDown(rows)
-            navigator.clipboard.writeText(markdown)
-          }}
-        >
-          Copy table to clipboard
-        </Button>
+      {rows.length > 0 && editMode && (
+        <>
+          <Button
+            className="mt-4 mr-4"
+            onClick={() => {
+              router.push(`/table/${id}`);
+            } }
+          >
+            Preview Table
+          </Button>
+          <Button
+            variant="secondary"
+            className="mt-4 mr-4"
+            onClick={() => {
+              const markdown = ConvertTableToMarkDown(rows)
+              navigator.clipboard.writeText(markdown)
+            } }
+          >
+            Copy table to clipboard
+          </Button>
+          <Button
+            variant="destructive"
+            className="mt-4 mr-4"
+            onClick={() => {
+              localStorage.removeItem(id || '');
+              router.push(`/table/new`);
+            } }
+          >
+            Delete Table
+          </Button>
+        </>
       )}
     </div>
   )
