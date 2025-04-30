@@ -1,6 +1,6 @@
 import { TextareaAutosize } from "@mui/material";
 import { useEffect, useRef } from "react";
-import { cn } from "utils/utils";
+import { cn } from "@/lib/utils";
 
 export function TextAreaEditor({
   value,
