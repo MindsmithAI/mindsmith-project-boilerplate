@@ -51,7 +51,7 @@ export default function EditorDemo() {
             value={text}
             onChange={setText}
             mode={mode}
-            className="w-full p-2"
+            className="w-full"
             placeholder="Type something here..."
           />
         </div>
