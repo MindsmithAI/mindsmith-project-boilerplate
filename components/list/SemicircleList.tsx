@@ -1,14 +1,10 @@
-interface SemicircleListProps {
-  items: string[];
-  colors: string[];
-}
+import { useContext } from "react";
+import { ListContext } from "@/app/components/List";
 
-export default function SemicircleList({
-  items,
-  colors
-}: SemicircleListProps) {
-  const n = items.length;
-  const segmentColors = items.map((_, i) => colors[i % colors.length]);
+export default function SemicircleList() {
+  const { items, colors, handleItemChange, editable } = useContext(ListContext);
+  const n = (items).length;
+  const segmentColors = (items ?? items).map((_, i) => colors[i % colors.length]);
 
   // Semicircle settings
   const cx = 200, cy = 200, rOuter = 180, thickness = 50;

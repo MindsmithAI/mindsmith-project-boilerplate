@@ -1,12 +1,12 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getList, ListData } from "@/lib/listStorage";
 import { Button } from "@/components/ui/button";
-import List from "@/app/components/list";
+import List from "@/app/components/List";
 
 const colors = [
-  "#4582A3"
+  "#4582C3"
 ]
 
 export default function ListPreviewPage() {
@@ -26,15 +26,20 @@ export default function ListPreviewPage() {
 
 
   return (
-    <div className="max-w-xl mx-auto py-10 px-2">
+    <div className="max-w-4xl mx-auto py-10 px-2">
       <div className="flex items-center gap-4 mb-4">
         <Button variant="outline" onClick={() => router.push(`/list/${listId}`)}>
           Edit
         </Button>
         <h1 className="text-2xl font-bold flex-1">List Preview</h1>
       </div>
-      <div className="overflow-x-auto">
-        <List items={list.items} variant={list.type} colors={colors} width="100%" height={300} />
+      <div>
+        <List
+          items={list.items}
+          variant={list.type}
+          colors={colors}
+          width="100%"
+          height={400} />
       </div>
     </div>
   );

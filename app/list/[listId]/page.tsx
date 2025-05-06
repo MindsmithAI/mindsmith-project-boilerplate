@@ -5,6 +5,7 @@ import { getList, saveList, ListType, ListData } from "@/lib/listStorage";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { TextAreaEditor } from "@/lib/TextAreaEditor";
+import List from "@/app/components/List";
 
 const LIST_TYPES: { label: string; value: ListType }[] = [
   { label: "Arrow", value: "arrow" },
@@ -44,7 +45,7 @@ export default function ListEditorPage() {
   if (!list) return <div className="p-8 text-center">Loading...</div>;
 
   return (
-    <div className="max-w-xl mx-auto py-10 space-y-6">
+    <div className="max-w-4xl mx-auto py-10 space-y-6">
       <div className="flex items-center gap-4">
         <h1 className="text-2xl font-bold flex-1">Edit List</h1>
         <Button variant="outline" onClick={() => router.push(`/list/${listId}/preview`)}>
@@ -96,6 +97,25 @@ export default function ListEditorPage() {
             </Button>
           </div>
         ))}
+        <Button
+          variant="outline"
+          onClick={() => {
+            const updatedItems = [...list.items, ""];
+            handleItemsChange(updatedItems);
+          }}
+          className="mt-2"
+        >
+          Add Item
+        </Button>
+      </div>
+      <div className="flex items-center">
+        <List
+          items={list.items}
+          variant={list.type}
+          width="100%"
+          height={400}
+          editable 
+        />
         <Button
           variant="outline"
           onClick={() => {

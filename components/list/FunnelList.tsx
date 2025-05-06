@@ -2,7 +2,7 @@ import TextEditorDisplayer, { BlockMode } from "@/app/components/TextEditorDispl
 import { useContext } from "react";
 import { ListContext } from "@/app/components/List";
 
-export default function ArrowList() {
+export default function FunnelList() {
   const { items, colors, handleItemChange, editable } = useContext(ListContext);
   const n = (items).length;
   const segmentColors = (items ?? items).map((_, i) => colors[i % colors.length]);
