@@ -4,7 +4,6 @@ import { useState } from "react";
 import TextEditorDisplayer, {
   BlockMode,
 } from "../components/TextEditorDisplayer";
-import List from "../components/list";
 
 export default function EditorDemo() {
   const [text, setText] = useState("Try typing here...");
@@ -64,8 +63,6 @@ export default function EditorDemo() {
           {text}
         </pre>
       </div>
-      <List items={["a", "b", "c", "d"]} variant="semicircle" />
-      <List items={["a", "b", "c", "d"]} variant="line" />
     </div>
   );
 }
