@@ -5,10 +5,6 @@ import { getList, ListData } from "@/lib/listStorage";
 import { Button } from "@/components/ui/button";
 import List from "@/app/components/List";
 
-const colors = [
-  "#4582C3"
-]
-
 export default function ListPreviewPage() {
   const params = useParams();
   const router = useRouter();
@@ -37,7 +33,6 @@ export default function ListPreviewPage() {
         <List
           items={list.items}
           variant={list.type}
-          colors={colors}
           width="100%"
           height={400} />
       </div>

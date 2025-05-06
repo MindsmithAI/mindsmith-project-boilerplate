@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { TextAreaEditor } from "@/lib/TextAreaEditor";
 import List from "@/app/components/List";
+import { Plus } from "lucide-react";
 
 const LIST_TYPES: { label: string; value: ListType }[] = [
   { label: "Arrow", value: "arrow" },
@@ -66,66 +67,33 @@ export default function ListEditorPage() {
         </Select>
       </div>
       <div>
-        <label className="block mb-1 font-medium">Items</label>
-        { list.items.length === 0 && (
-          <div className="text-sm text-gray-500 mb-2">
-            No items yet. Please enter items below.
-          </div>
-        )}
-        {list.items.length > 0 && list.items.map((item, index) => (
-          <div key={index} className="flex items-center mb-2">
-            <span className="mr-2">{index + 1}.</span>
-            <TextAreaEditor
-              value={item}
-              onValueChange={(value) => {
-                const updatedItems = [...list.items];
-                updatedItems[index] = value;
-                handleItemsChange(updatedItems);
-              }}
-              placeholder="Enter item"
-              className="flex-1"
+        <div className="flex items-center justify-center">
+          {list.items.length === 0 && (
+            <div className="text-sm text-gray-500 mb-2">
+              No items yet. Please enter items below.
+            </div>
+          )}
+          {list.items.length > 0 && (
+            <List
+              items={list.items}
+              variant={list.type}
+              width="100%"
+              height={400}
+              editable
+              handleListChange={handleItemsChange}
             />
-            <Button
-              variant="destructive"
-              onClick={() => {
-                const updatedItems = list.items.filter((_, i) => i !== index);
-                handleItemsChange(updatedItems);
-              }}
-              className="ml-2"
-            >
-              Remove
-            </Button>
-          </div>
-        ))}
-        <Button
-          variant="outline"
-          onClick={() => {
-            const updatedItems = [...list.items, ""];
-            handleItemsChange(updatedItems);
-          }}
-          className="mt-2"
-        >
-          Add Item
-        </Button>
-      </div>
-      <div className="flex items-center">
-        <List
-          items={list.items}
-          variant={list.type}
-          width="100%"
-          height={400}
-          editable 
-        />
-        <Button
-          variant="outline"
-          onClick={() => {
-            const updatedItems = [...list.items, ""];
-            handleItemsChange(updatedItems);
-          }}
-          className="mt-2"
-        >
-          Add Item
-        </Button>
+          )}
+          <Button
+            variant="outline"
+            onClick={() => {
+              const updatedItems = [...list.items, ""];
+              handleItemsChange(updatedItems);
+            }}
+            className="rounded-full aspect-square"
+          >
+            <Plus size={16} className="-m-4"/>
+          </Button>
+        </div>
       </div>
     </div>
   );

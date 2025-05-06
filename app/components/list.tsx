@@ -13,29 +13,35 @@ interface ListProps {
   width?: number | string;
   height?: number | string;
   editable?: boolean;
+  handleListChange?: (items: string[]) => void;
 }
 
 const DEFAULT_COLORS = [
-  "#FF5F6D", "#FFC371", "#47EFA6", "#3CA9E2", "#845EC2", "#F9F871", "#FF9671", "#00C9A7"
+  "#4582C3",
 ];
 
-export default function List({ items: initialItems, editable = false, colors = DEFAULT_COLORS, variant = "arrow", ...props }: ListProps) {
-  const [items, setItems] = useState(initialItems);
-
+export default function List({ items, editable = false, colors = DEFAULT_COLORS, variant = "arrow", ...props }: ListProps) {
   const handleItemChange = (index: number, value: string) => {
-    setItems(prev => prev.map((item, i) => (i === index ? value : item)));
-
+    const updatedItems = items.map((item, i) => (i === index ? value : item))
+    if (props.handleListChange) {
+      props.handleListChange(updatedItems);
+    }
   };
 
-
+  const handleDeleteItem = (index: number) => {
+    const updatedItems = items.filter((_, i) => i !== index);
+    if (props.handleListChange) {
+      props.handleListChange(updatedItems);
+    }
+  };
 
   const componentMap = { arrow: ArrowList, circle: CircleList, semicircle: SemicircleList, funnel: FunnelList, pyramid: PyramidList };
   const VariantComponent = componentMap[variant];
 
   return (
-    <div style={{ width: props.width, height: props.height }}>
-      <ListContext.Provider value={{ items, handleItemChange, editable, colors }}>
-        <svg width="100%" height={props.height} viewBox={`0 0 400 1`}>
+    <div className="w-full aspect-[4/1]">
+      <ListContext.Provider value={{ items, editable, colors, handleItemChange, handleDeleteItem }}>
+        <svg width="100%" height={props.height} viewBox={`0 0 400 100`}>
           <VariantComponent />
         </svg>
       </ListContext.Provider>
@@ -48,14 +54,16 @@ import { createContext } from "react";
 
 interface ListContextType {
   items: string[];
-  handleItemChange: (index: number, value: string) => void;
   editable: boolean;
   colors: string[];
+  handleItemChange: (index: number, value: string) => void;
+  handleDeleteItem: (index: number) => void;
 }
 
 export const ListContext = createContext<ListContextType>({
   items: [],
-  handleItemChange: () => { },
   editable: false,
   colors: [],
+  handleItemChange: () => { },
+  handleDeleteItem: () => { }
 });
