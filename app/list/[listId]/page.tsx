@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { getList, saveList, ListType, ListData } from "@/lib/listStorage";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { TextAreaEditor } from "@/lib/TextAreaEditor";
 import List from "@/app/components/List";
 import { Plus } from "lucide-react";
 
@@ -67,33 +66,33 @@ export default function ListEditorPage() {
         </Select>
       </div>
       <div>
-        <div className="flex items-center justify-center">
-          {list.items.length === 0 && (
+        {list.items.length === 0 && (
+          <>
             <div className="text-sm text-gray-500 mb-2">
               No items yet. Please enter items below.
             </div>
-          )}
-          {list.items.length > 0 && (
-            <List
-              items={list.items}
-              variant={list.type}
-              width="100%"
-              height={400}
-              editable
-              handleListChange={handleItemsChange}
-            />
-          )}
-          <Button
-            variant="outline"
-            onClick={() => {
-              const updatedItems = [...list.items, ""];
-              handleItemsChange(updatedItems);
-            }}
-            className="rounded-full aspect-square"
-          >
-            <Plus size={16} className="-m-4"/>
-          </Button>
-        </div>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const updatedItems = [...list.items, ""];
+                handleItemsChange(updatedItems);
+              }}
+              className="rounded-full aspect-square"
+            >
+              <Plus size={16} className="-m-4"/>
+            </Button>
+          </>
+        )}
+        {list.items.length > 0 && (
+          <List
+            items={list.items}
+            variant={list.type}
+            width="100%"
+            height={400}
+            editable
+            handleListChange={handleItemsChange}
+          />
+        )}
       </div>
     </div>
   );

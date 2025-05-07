@@ -11,7 +11,7 @@ interface ListProps {
   variant?: "semicircle" | "arrow" | "circle" | "funnel" | "pyramid";
   colors?: string[]; // Optional: custom color palette
   width?: number | string;
-  height?: number | string;
+  height: number;
   editable?: boolean;
   handleListChange?: (items: string[]) => void;
 }
@@ -35,14 +35,25 @@ export default function List({ items, editable = false, colors = DEFAULT_COLORS,
     }
   };
 
+  const handleAddItem = (index: number) => {
+    const updatedItems = [...items.slice(0, index), "", ...items.slice(index)];
+    if (props.handleListChange) {
+      props.handleListChange(updatedItems);
+    }
+  };
+
+  const viewHeight = variant === 'arrow' ? props.height / 2 : props.height;
+
+  const viewBox = [0, 0, props.height * 2, viewHeight];
+
   const componentMap = { arrow: ArrowList, circle: CircleList, semicircle: SemicircleList, funnel: FunnelList, pyramid: PyramidList };
   const VariantComponent = componentMap[variant];
 
   return (
-    <div className="w-full aspect-[4/1]">
-      <ListContext.Provider value={{ items, editable, colors, handleItemChange, handleDeleteItem }}>
-        <svg width="100%" height={props.height} viewBox={`0 0 400 100`}>
-          <VariantComponent />
+    <div className={`w-full ${variant === 'arrow' ? 'aspect-[4/1]' : 'aspect-[2/1]'}`}>
+      <ListContext.Provider value={{ items, editable, colors, handleItemChange, handleDeleteItem, handleAddItem }}>
+        <svg width={props.width} viewBox={viewBox.join(" ")} style={{ display: "block", maxWidth: "100%" }}>
+          <VariantComponent height={viewHeight}/>
         </svg>
       </ListContext.Provider>
     </div>
@@ -58,6 +69,7 @@ interface ListContextType {
   colors: string[];
   handleItemChange: (index: number, value: string) => void;
   handleDeleteItem: (index: number) => void;
+  handleAddItem: (index: number) => void;
 }
 
 export const ListContext = createContext<ListContextType>({
@@ -65,5 +77,6 @@ export const ListContext = createContext<ListContextType>({
   editable: false,
   colors: [],
   handleItemChange: () => { },
-  handleDeleteItem: () => { }
+  handleDeleteItem: () => { },
+  handleAddItem: () => { },
 });
