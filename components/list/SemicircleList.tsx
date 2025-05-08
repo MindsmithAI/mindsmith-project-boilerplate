@@ -10,10 +10,10 @@ export default function SemicircleList({ height }: { height: number }) {
   const segmentColors = (items ?? items).map((_, i) => colors[i % colors.length]);
 
   // Semicircle settings
-  const cx = height, cy = height * .9, rOuter = height / 1.5, thickness = rOuter / 2.5;
+  const cx = height, cy = height * .9, rOuter = height / 1.8, thickness = rOuter / 2.5;
   const rInner = rOuter - thickness;
   const arrowWidthPx = rOuter / 6;
-  const arrowPoint = (rOuter + rInner) / 1.95
+  const arrowPoint = (rOuter + rInner) / 1.96
   const arrowWidth = arrowWidthPx / arrowPoint;
   const arrowPointNeg = (rOuter + rInner) / 1.95
   const angleStep = Math.PI / n;
